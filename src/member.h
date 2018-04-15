@@ -43,6 +43,7 @@ class Member {
 
   void PathToMemberBFS(uint64_t dst_member_id);
   void PathToMemberIDDFS(uint64_t dst_member_id);
+  Member * DLS(Member *node, int depth, uint64_t dst_member_id);
   void PrintPath(Member *dst);
   void DumpConnections();
 
