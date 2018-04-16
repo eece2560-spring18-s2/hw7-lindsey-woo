@@ -33,7 +33,7 @@ class Database{
   void RandomizeGraph(int num_connections);
 
   double BestGroupsToJoin(Member *root);
-  int ExtractMin();
+  int ExtractMin(std::vector<Member *> membersVector);
 };
 
 }

@@ -214,22 +214,23 @@ void Database::BuildMemberGraph() {
 double Database::BestGroupsToJoin(Member *root) {
   // Fill in your code here
   double total_weight = 0;
-  std::vector<Member *> memberss;
+  std::vector<Member *> membersVector;
   for (auto member : members) {
     member->key = std::numeric_limits<int>::max();
     member->parent = NULL;
     member->color = COLOR_WHITE;
-    memberss.push_back(member);
+    membersVector.push_back(member);
   }
   root->key = 0;
   // for (auto mem : memberss) {
-  while (!members.empty()) {  
-    int index = ExtractMin();
-    Member *u = memberss.at(index);
+  while (!membersVector.empty()) {  
+    int index = ExtractMin(membersVector);
+    std::cout << index;
+    Member *u = membersVector.at(index);
     // int index = 0;
     // for (auto m: members) {
     //   if (m->member_id == u->member_id) {
-        members.erase(members.begin()+index);
+        membersVector.erase(membersVector.begin()+index);
     //   }
     //   index++;
     // }
@@ -249,19 +250,23 @@ double Database::BestGroupsToJoin(Member *root) {
   return total_weight;
 }
 
-int Database::ExtractMin() {
+int Database::ExtractMin(std::vector<Member *> membersVector) {
   double min = std::numeric_limits<double>::max();
-  for (auto mem : members) {
+  int index = 0;
+  for (auto mem : membersVector) {
     if (mem->key < min) {
       min = mem->key;
     }
   }
-  for (auto member : members) {
-    int index = 0;
-    if (member->key == min) {
+  for (auto member : membersVector) {
+    // int index = 0;
+    if (member->key != min) {
+      index++;
+    }
+    else {
       return index;
     }
-    index++;
+    // index++;
   }
   return 0;
 }
