@@ -196,10 +196,79 @@ void Database::LoadData(const std::string &data_folder_path,
 
 void Database::BuildMemberGraph() {
   // Fill in your code here
+  for (auto member : members) {
+    for (auto group : member->groups) {
+      for (auto group_member : group->members) {
+        if (member->connecting_members.find(group_member->member_id)==member->connecting_members.end() && (member->member_id != group_member->member_id)) {
+          MemberConnection mc;
+          mc.group = group;
+          mc.dst = group_member;
+          member->connecting_members[group_member->member_id] = mc;
+        }
+      }
+    }
+  }
+  
 }
 
 double Database::BestGroupsToJoin(Member *root) {
   // Fill in your code here
+  double total_weight = 0;
+  std::vector<Member *> membersVector;
+  for (auto member : members) {
+    member->key = std::numeric_limits<int>::max();
+    member->parent = NULL;
+    member->color = COLOR_WHITE;
+    membersVector.push_back(member);
+  }
+  root->key = 0;
+  // for (auto mem : memberss) {
+  while (!membersVector.empty()) {  
+    int index = ExtractMin(membersVector);
+    std::cout << index;
+    Member *u = membersVector.at(index);
+    // int index = 0;
+    // for (auto m: members) {
+    //   if (m->member_id == u->member_id) {
+        membersVector.erase(membersVector.begin()+index);
+    //   }
+    //   index++;
+    // }
+    u->color = COLOR_BLACK;
+    for (auto &cm : u->connecting_members) {
+      auto conn = cm.second;
+      // MemberConnection mc;
+      // mc = conn;
+      if (conn.dst->color != COLOR_BLACK && conn.GetWeight() < conn.dst->key) {
+       conn.dst->key = conn.GetWeight();
+       conn.dst->parent = u;
+       total_weight = total_weight + conn.GetWeight();
+      }
+    }
+    
+  }
+  return total_weight;
+}
+
+int Database::ExtractMin(std::vector<Member *> membersVector) {
+  double min = std::numeric_limits<double>::max();
+  int index = 0;
+  for (auto mem : membersVector) {
+    if (mem->key < min) {
+      min = mem->key;
+    }
+  }
+  for (auto member : membersVector) {
+    // int index = 0;
+    if (member->key != min) {
+      index++;
+    }
+    else {
+      return index;
+    }
+    // index++;
+  }
+  return 0;
 }
 
 }
